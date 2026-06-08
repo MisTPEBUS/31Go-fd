@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="
+            width=device-width,
+            initial-scale=1,
+            maximum-scale=1,
+            user-scalable=no
+        " />
+
+    <title>
+        景點打卡
+    </title>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js">
+    </script>
+
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+
+    <style>
+        html,
+        body {
+            touch-action: manipulation;
+        }
+    </style>
+
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-[#eef7fc] via-[#dcecf7] to-[#cde4f3] overflow-hidden">
+
+    <!-- glow -->
+
+    <div class="fixed top-[-100px] right-[-80px] w-[320px] h-[320px] rounded-full bg-cyan-200/40 blur-3xl">
+    </div>
+
+    <div class="fixed bottom-[-100px] left-[-80px] w-[260px] h-[260px] rounded-full bg-sky-200/40 blur-3xl">
+    </div>
+
+    <div class="relative z-10 flex items-center justify-center min-h-screen p-5">
+
+        <div
+            class="w-full max-w-md rounded-[36px] bg-white/40 backdrop-blur-2xl border border-white/50 shadow-2xl p-8 text-center">
+
+            <!-- Loading -->
+
+            <div id="loading">
+
+                <div class="w-16 h-16 border-4 border-sky-100 border-t-[#295A86] rounded-full animate-spin mx-auto">
+                </div>
+
+                <h1 class="text-3xl font-black text-slate-800 mt-8">
+                    景點打卡中
+                </h1>
+
+                <p class="text-slate-500 text-sm leading-7 mt-4">
+                    正在驗證景點資訊，
+                    請稍候...
+                </p>
+
+            </div>
+
+            <!-- Success -->
+
+            <div id="successBox" class="hidden">
+
+                <div
+                    class="w-24 h-24 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-emerald-600" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                    </svg>
+
+                </div>
+
+                <h2 class="text-3xl font-black text-slate-800 mt-8">
+                    打卡成功
+                </h2>
+
+                <p id="successMessage" class="text-slate-500 leading-8 mt-5">
+                </p>
+
+            </div>
+
+            <!-- Error -->
+
+            <div id="errorBox" class="hidden">
+
+                <div
+                    class="w-24 h-24 rounded-full bg-red-50 border border-red-100 flex items-center justify-center mx-auto">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-500" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+
+                </div>
+
+                <h2 class="text-3xl font-black text-slate-800 mt-8">
+                    打卡失敗
+                </h2>
+
+                <p id="errorMessage" class="text-slate-500 leading-8 mt-5">
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="module" src="../assets/js/spot-check.js">
+    </script>
+
+</body>
+
+</html>

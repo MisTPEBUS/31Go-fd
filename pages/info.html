@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        三鶯輕軌 GO｜數位會員證
+    </title>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js">
+    </script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="
+        min-h-screen
+        bg-gradient-to-br
+        from-slate-100
+        via-slate-50
+        to-sky-100
+        flex
+        items-center
+        justify-center
+        p-5
+    ">
+
+    <div class="
+            relative
+            w-full
+            max-w-[390px]
+            overflow-hidden
+            rounded-[40px]
+            bg-white
+            shadow-[0_30px_80px_rgba(0,0,0,0.12)]
+        ">
+
+        <!-- Cover -->
+
+        <div class="relative h-[240px]">
+
+            <img id="coverImage" src="" class="
+                    w-full
+                    h-full
+                    object-cover
+                ">
+
+            <div class="
+                    absolute
+                    inset-0
+                    bg-gradient-to-t
+                    from-black/40
+                    to-transparent
+                ">
+            </div>
+
+            <div class="
+                    absolute
+                    left-6
+                    top-6
+                    text-white
+                ">
+
+                <div class="
+                        text-xs
+                        tracking-[0.35em]
+                        opacity-80
+                    ">
+                    SAN-YING GO TICKET
+                </div>
+
+                <h1 class="
+                        mt-2
+                        text-3xl
+                        font-black
+                    ">
+                    三鶯輕軌 GO
+                </h1>
+
+            </div>
+
+        </div>
+
+        <!-- Card Body -->
+
+        <div class="relative bg-white">
+
+            <!-- Avatar -->
+
+            <div class="
+                    absolute
+                    -top-12
+                    left-6
+                ">
+
+                <img id="avatarImage" src="" class="
+                        w-24
+                        h-24
+                        rounded-full
+                        border-4
+                        border-white
+                        shadow-xl
+                        object-cover
+                    ">
+
+            </div>
+
+            <!-- Status -->
+
+            <div id="roleBadgeContainer" class="
+                absolute
+                top-6
+                right-6
+            ">
+            </div>
+
+            <div class="
+                    px-6
+                    pt-16
+                    pb-8
+                ">
+
+                <!-- User -->
+
+                <div>
+
+                    <h2 id="displayName" class="
+                            text-3xl
+                            font-black
+                            text-slate-900
+                        ">
+                        載入中...
+                    </h2>
+
+                    <div>
+
+                        <div class="
+							  
+								tracking-[0.2em]
+								text-slate-700
+							">
+                            活動碼
+
+                            <span class="
+								text-xs
+								tracking-[0.2em]
+								text-slate-400
+							">
+                                ACTIVE CODE
+
+                            </span>
+                            <div id="activityCode" class="
+                                mt-2
+                                font-bold
+                                text-lg
+                                text-slate-900
+                            ">
+                                載入中...
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+
+
+                </div>
+
+                <!-- Divider -->
+                <!-- Register Campaign -->
+
+                <div class="
+        mt-6
+        rounded-[28px]
+        overflow-hidden
+        bg-gradient-to-r
+        from-[#183B5B]
+        via-[#295A86]
+        to-[#3A7BB8]
+        text-white
+        shadow-[0_15px_40px_rgba(24,59,91,0.25)]
+    ">
+
+                    <button id="registerCampaignBtn" class="
+            w-full
+            px-6
+            py-5
+            text-left
+        ">
+
+                        <div class="
+            flex
+            items-center
+            justify-between
+        ">
+
+                            <div>
+
+                                <div class="
+                        text-xs
+                        tracking-[0.25em]
+                        opacity-70
+                    ">
+                                    JOIN
+                                </div>
+
+                                <h3 class="
+                        mt-2
+                        text-xl
+                        font-black
+                    ">
+                                    註冊活動
+                                </h3>
+
+                                <p class="
+                        mt-2
+                        text-sm
+                        text-white/80
+                    ">
+                                    開始新的打卡旅程
+                                </p>
+
+                            </div>
+
+                            <div class="
+                    w-12
+                    h-12
+                    rounded-2xl
+                    bg-white/15
+                    backdrop-blur
+                    flex
+                    items-center
+                    justify-center
+                ">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+                    </button>
+
+                </div>
+
+                <div class="
+                        my-8
+                        h-px
+                        bg-slate-200
+                    ">
+                </div>
+
+                <div class="mb-8">
+
+                    <p class="
+        text-[11px]
+        tracking-[0.35em]
+        uppercase
+        text-slate-400
+    ">
+                        HISTORY
+                    </p>
+
+                    <h2 class="
+        mt-2
+        text-3xl
+        font-black
+        text-slate-900
+    ">
+                        活動紀錄
+                    </h2>
+
+                    <div class="
+        mt-3
+        w-12
+        h-[2px]
+        bg-slate-900
+    ">
+                    </div>
+
+                </div>
+                <!-- Order -->
+
+
+                <!-- spotlist -->
+                <div id="activityListContainer"></div>
+
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 使用者須知 Modal -->
+
+    <div id="noticeModal" class="
+        hidden
+        fixed
+        
+        inset-0
+        bg-black/60
+        backdrop-blur-sm
+        flex
+        items-end
+        justify-center
+        z-50
+        px-4
+        pb-6
+    ">
+
+        <div class="
+            relative
+            w-full
+            max-w-md
+            overflow-hidden
+            rounded-[32px]
+            bg-white
+            shadow-2xl
+        ">
+
+            <!-- Background Glow -->
+
+            <div class="
+                absolute
+                -top-16
+                -right-16
+                w-48
+                h-48
+                rounded-full
+                bg-sky-50
+                blur-3xl
+            ">
+            </div>
+
+            <div class="relative z-10 p-7">
+
+                <!-- Header -->
+
+                <div class="mb-6">
+
+                    <p class="
+                        text-xs
+                        tracking-[0.25em]
+                        text-slate-400
+                    ">
+                        EVENT POLICY
+                    </p>
+
+                    <h2 class="
+                        text-2xl
+                        font-black
+                        text-slate-900
+                        mt-3
+                    ">
+                        活動參加須知
+                    </h2>
+
+                </div>
+
+                <!-- Content -->
+
+                <div class="
+                    space-y-5
+                    text-sm
+                    leading-8
+                    text-slate-600
+                    max-h-[340px]
+                    overflow-y-auto
+                    pr-1
+                ">
+
+                    <div class="
+                        rounded-2xl
+                        bg-slate-50
+                        border
+                        border-slate-100
+                        p-4
+                    ">
+
+                        <p class="font-bold text-slate-800">
+                            三鶯 GO 景點集章活動
+                        </p>
+
+                        <p class="mt-2">
+                            歡迎參加本次三鶯地區觀光集章活動，
+                            請於活動期間內完成指定景點打卡，
+                            享受三鶯文化與城市旅遊體驗。
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <p class="font-bold text-slate-800">
+                            活動參加說明
+                        </p>
+
+                        <ul class="
+                            mt-3
+                            space-y-3
+                            list-disc
+                            pl-5
+                        ">
+
+                            <li>
+                                每位使用者需透過 LINE LIFF
+                                頁面參加活動。
+                            </li>
+
+                            <li>
+                                請確認填寫之資料與乘車資訊正確，
+                                若資料錯誤將可能影響活動資格。
+                            </li>
+
+                            <li>
+                                景點 QRCode
+                                僅限於現場掃描完成打卡。
+                            </li>
+
+                            <li>
+                                同一景點不可重複累積活動次數。
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <div>
+
+                        <p class="font-bold text-slate-800">
+                            個人資料使用
+                        </p>
+
+                        <p class="mt-3">
+                            為進行活動驗證、通知與兌獎作業，
+                            主辦單位將蒐集必要之活動資料，
+                            並依相關法規妥善保存與使用。
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <p class="font-bold text-slate-800">
+                            其他事項
+                        </p>
+
+                        <p class="mt-3">
+                            主辦單位保留活動內容調整、
+                            修改與最終解釋權利。
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+
+                <div class="flex gap-3 mt-8">
+
+                    <button id="cancelNoticeBtn" type="button" class="
+                        flex-1
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-white
+                        py-4
+                        font-bold
+                        text-slate-600
+                        transition-all
+                    ">
+                        稍後再說
+                    </button>
+
+                    <button id="confirmNoticeBtn" type="button" class="
+                        flex-1
+                        rounded-2xl
+                        bg-gradient-to-r
+                        from-[#183B5B]
+                        to-[#2F6998]
+                        py-4
+                        font-bold
+                        text-white
+                        shadow-lg
+                        transition-all
+                    ">
+                        同意並開始活動
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="module" src="../assets/js/info.js">
+    </script>
+</body>
+
+</html>

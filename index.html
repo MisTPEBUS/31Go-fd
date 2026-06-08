@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        三鶯輕軌 GO
+    </title>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js">
+    </script>
+
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: "Noto Sans TC", sans-serif;
+
+            background:
+                linear-gradient(180deg,
+                    #ffffff 0%,
+                    #e0f2fe 40%,
+                    #bae6fd 100%);
+        }
+
+        /* =========================
+   BACKGROUND GLOW
+========================= */
+
+        .glow {
+            position: absolute;
+
+            width: 700px;
+            height: 700px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(circle,
+                    rgba(255, 255, 255, .9) 0%,
+                    rgba(125, 211, 252, .35) 45%,
+                    rgba(125, 211, 252, 0) 75%);
+
+            filter: blur(30px);
+
+            animation:
+                pulse 6s ease-in-out infinite;
+        }
+
+        /* =========================
+   FLOATING CIRCLES
+========================= */
+
+        .circle {
+            position: absolute;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, .28);
+
+            backdrop-filter: blur(10px);
+
+            border:
+                1px solid rgba(255, 255, 255, .35);
+        }
+
+        .c1 {
+            width: 220px;
+            height: 220px;
+
+            top: 10%;
+            left: 8%;
+
+            animation:
+                float1 8s ease-in-out infinite;
+        }
+
+        .c2 {
+            width: 120px;
+            height: 120px;
+
+            bottom: 18%;
+            left: 14%;
+
+            animation:
+                float2 10s ease-in-out infinite;
+        }
+
+        .c3 {
+            width: 260px;
+            height: 260px;
+
+            top: 14%;
+            right: 10%;
+
+            animation:
+                float3 12s ease-in-out infinite;
+        }
+
+        .c4 {
+            width: 140px;
+            height: 140px;
+
+            bottom: 12%;
+            right: 16%;
+
+            animation:
+                float1 9s ease-in-out infinite;
+        }
+
+        /* =========================
+   MAIN CONTENT
+========================= */
+
+        .hero {
+            position: relative;
+
+            z-index: 10;
+
+            text-align: center;
+        }
+
+        /* small text */
+
+        .sub-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 12px;
+
+            color: #0284c7;
+
+            margin-bottom: 24px;
+
+            opacity: .8;
+        }
+
+        /* title */
+
+        .title {
+            position: relative;
+
+            font-size: clamp(72px, 12vw, 180px);
+            font-weight: 900;
+
+            line-height: 1;
+
+            letter-spacing: 10px;
+
+            color: white;
+
+            text-transform: uppercase;
+
+            text-shadow:
+                0 12px 40px rgba(2, 132, 199, .25),
+                0 0 80px rgba(255, 255, 255, .45);
+
+            animation:
+                titleFloat 5s ease-in-out infinite;
+        }
+
+        /* outline */
+
+        .title::before {
+            content: "三鶯輕軌 GO";
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: -1;
+
+            color: transparent;
+
+            -webkit-text-stroke:
+                2px rgba(2, 132, 199, .18);
+
+            transform:
+                translate(8px, 8px);
+        }
+
+        /* glass effect */
+
+        .glass-line {
+            width: 420px;
+            height: 8px;
+
+            margin: 42px auto 0;
+
+            border-radius: 999px;
+
+            background:
+                linear-gradient(to right,
+                    transparent,
+                    rgba(255, 255, 255, .95),
+                    transparent);
+
+            box-shadow:
+                0 0 24px rgba(255, 255, 255, .6);
+        }
+
+        /* =========================
+   FLOATING PARTICLES
+========================= */
+
+        .particle {
+            position: absolute;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, .7);
+
+            box-shadow:
+                0 0 14px rgba(255, 255, 255, .8);
+        }
+
+        .p1 {
+            width: 8px;
+            height: 8px;
+
+            top: 20%;
+            left: 30%;
+
+            animation:
+                particle 6s infinite ease-in-out;
+        }
+
+        .p2 {
+            width: 14px;
+            height: 14px;
+
+            top: 34%;
+            right: 28%;
+
+            animation:
+                particle 8s infinite ease-in-out;
+        }
+
+        .p3 {
+            width: 10px;
+            height: 10px;
+
+            bottom: 28%;
+            left: 24%;
+
+            animation:
+                particle 7s infinite ease-in-out;
+        }
+
+        .p4 {
+            width: 16px;
+            height: 16px;
+
+            bottom: 18%;
+            right: 20%;
+
+            animation:
+                particle 9s infinite ease-in-out;
+        }
+
+        .p5 {
+            width: 6px;
+            height: 6px;
+
+            top: 14%;
+            right: 40%;
+
+            animation:
+                particle 5s infinite ease-in-out;
+        }
+
+        /* =========================
+   ANIMATION
+========================= */
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: .9;
+            }
+
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+
+        }
+
+        @keyframes titleFloat {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0px);
+            }
+
+            50% {
+                transform:
+                    translateY(-12px);
+            }
+
+        }
+
+        @keyframes float1 {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0px) translateX(0px);
+            }
+
+            50% {
+                transform:
+                    translateY(-18px) translateX(10px);
+            }
+
+        }
+
+        @keyframes float2 {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0px) translateX(0px);
+            }
+
+            50% {
+                transform:
+                    translateY(14px) translateX(-12px);
+            }
+
+        }
+
+        @keyframes float3 {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0px);
+            }
+
+            50% {
+                transform:
+                    translateY(-24px);
+            }
+
+        }
+
+        @keyframes particle {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0px);
+
+                opacity: .3;
+            }
+
+            50% {
+                transform:
+                    translateY(-30px);
+
+                opacity: 1;
+            }
+
+        }
+
+        /* =========================
+   MOBILE
+========================= */
+
+        @media(max-width:768px) {
+
+            .sub-title {
+                font-size: 14px;
+                letter-spacing: 6px;
+            }
+
+            .title {
+                font-size: 64px;
+                letter-spacing: 4px;
+            }
+
+            .glass-line {
+                width: 220px;
+            }
+
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <div class="glow"></div>
+
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+    <div class="circle c3"></div>
+    <div class="circle c4"></div>
+
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
+
+    <div class="hero">
+
+        <div class="sub-title">
+            SAN-YING GO TICKET
+        </div>
+
+        <div class="title">
+            三鶯輕軌 GO
+        </div>
+
+        <div class="glass-line"></div>
+
+        <script type="module" src="./assets/js/index.js">
+        </script>
+    </div>
+
+</body>
+
+</html>

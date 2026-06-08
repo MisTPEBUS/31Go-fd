@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="
+            width=device-width,
+            initial-scale=1.0,
+            maximum-scale=1,
+            user-scalable=no
+        ">
+
+    <title>
+        三鶯 GO｜活動註冊
+    </title>
+
+    <!-- LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+    <!-- QRCode Scanner -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        html,
+        body {
+            touch-action: manipulation;
+        }
+    </style>
+
+</head>
+
+<body class="
+    min-h-screen
+    bg-gradient-to-b
+    from-[#F8FBFD]
+    via-[#F3F7FA]
+    to-[#EDF3F7]
+    text-slate-800
+">
+
+    <!-- Background Glow -->
+
+    <div class="
+        fixed
+        top-[-120px]
+        right-[-80px]
+        w-[320px]
+        h-[320px]
+        rounded-full
+        bg-sky-200/40
+        blur-3xl
+    ">
+    </div>
+
+    <div class="
+        fixed
+        bottom-[-100px]
+        left-[-80px]
+        w-[260px]
+        h-[260px]
+        rounded-full
+        bg-cyan-200/30
+        blur-3xl
+    ">
+    </div>
+
+    <main class="
+        relative
+        z-10
+        max-w-md
+        mx-auto
+        min-h-screen
+        px-5
+        py-8
+        pb-24
+    ">
+
+        <!-- Header -->
+
+        <section class="
+            text-center
+            mb-6
+        ">
+
+            <div class="
+            hidden
+                inline-flex
+                items-center
+                justify-center
+                w-24
+                h-24
+                rounded-[32px]
+                bg-gradient-to-br
+                from-[#4FA3D9]
+                to-[#2C6E9B]
+                text-white
+                text-4xl
+                font-black
+                shadow-[0_20px_40px_rgba(44,110,155,0.25)]
+            ">
+                GO
+            </div>
+
+            <div class="
+                mt-5
+                text-xs
+                tracking-[0.35em]
+                text-[#4FA3D9]
+                font-bold
+            ">
+                SAN-YING GO
+            </div>
+
+            <h1 class="
+                mt-2
+                text-3xl
+                font-black
+                text-slate-800
+            ">
+                活動註冊
+            </h1>
+
+            <p class="
+                mt-3
+                text-sm
+                leading-7
+                text-slate-500
+            ">
+                輸入車票號碼或掃描票券 QRCode，開始你的三鶯探索旅程。
+            </p>
+
+        </section>
+
+        <!-- Register Card -->
+
+        <section class="
+            bg-white/80
+            backdrop-blur-xl
+            border
+            border-white/70
+            rounded-[36px]
+            p-6
+            shadow-[0_20px_60px_rgba(44,110,155,0.12)]
+        ">
+
+            <!-- Mode Tabs -->
+
+            <div class="
+                grid
+                grid-cols-2
+                gap-3
+                rounded-[24px]
+                bg-slate-100
+                p-2
+            ">
+
+                <button id="manualModeBtn" class="
+                        h-12
+                        rounded-2xl
+                        bg-white
+                        text-[#2C6E9B]
+                        font-black
+                        shadow-sm
+                        transition
+                    ">
+                    輸入票號
+                </button>
+
+                <button id="scanModeBtn" class="
+                        h-12
+                        rounded-2xl
+                        text-slate-500
+                        font-black
+                        transition
+                    ">
+                    掃描 QR
+                </button>
+
+            </div>
+
+            <!-- Manual Mode -->
+
+            <div id="manualPanel" class="mt-7">
+
+                <div class="
+                    text-xs
+                    tracking-[0.25em]
+                    text-slate-400
+                ">
+                    TICKET NUMBER
+                </div>
+
+                <label for="ticketNoInput" class="
+                        block
+                        mt-3
+                        text-sm
+                        font-bold
+                        text-slate-700
+                    ">
+                    車票號碼
+                </label>
+                <div>
+                    <div class="
+    mt-3
+    flex
+    items-center
+    h-16
+    rounded-3xl
+    border
+    border-slate-200
+    bg-slate-50
+    overflow-hidden
+    focus-within:border-[#4FA3D9]
+    focus-within:ring-4
+    focus-within:ring-sky-100
+">
+
+                        <div class="
+        px-5
+        text-lg
+        font-black
+        text-slate-700
+        border-r
+        border-slate-200
+        shrink-0
+    ">
+                            PO-
+                        </div>
+
+                        <input id="ticketNoInput" type="text" inputmode="numeric" maxlength="10"
+                            placeholder="xxxxxxxxxx" class="
+            flex-1
+            h-full
+            bg-transparent
+            px-4
+            text-center
+            text-lg
+            font-black
+            tracking-[0.12em]
+            outline-none
+        ">
+
+                    </div>
+
+                    <p class="
+        mt-3
+        text-xs
+        leading-6
+        text-slate-400
+    ">
+                        格式範例：PO-1234567890
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Scan Mode -->
+
+            <div id="scanPanel" class="
+                hidden
+                mt-7
+            ">
+
+                <div class="
+                    text-xs
+                    tracking-[0.25em]
+                    text-slate-400
+                ">
+                    QR CODE SCAN
+                </div>
+
+                <h2 class="
+                    mt-3
+                    text-lg
+                    font-black
+                    text-slate-800
+                ">
+                    掃描票券 QRCode
+                </h2>
+
+                <p class="
+                    mt-2
+                    text-sm
+                    leading-7
+                    text-slate-500
+                ">
+                    請將票券上的 QRCode 對準相機。掃描後會自動填入車票號碼，仍需點擊確認註冊。
+                </p>
+
+                <button id="startScanBtn" class="
+                        mt-5
+                        w-full
+                        h-14
+                        rounded-2xl
+                        bg-gradient-to-r
+                        from-[#4FA3D9]
+                        to-[#2C6E9B]
+                        text-white
+                        font-bold
+                        shadow-lg
+                        shadow-sky-200/50
+                        active:scale-[0.98]
+                        transition
+                    ">
+                    開啟相機掃描
+                </button>
+
+                <div id="scannerContainer" class="
+                        hidden
+                        mt-5
+                        overflow-hidden
+                        rounded-[28px]
+                        border
+                        border-slate-200
+                        bg-black
+                    ">
+
+                    <div id="reader"></div>
+
+                </div>
+
+            </div>
+
+            <!-- Message -->
+
+            <div id="resultMessage" class="
+                    hidden
+                    mt-6
+                    rounded-3xl
+                    border
+                    border-sky-100
+                    bg-sky-50
+                    p-4
+                    text-sm
+                    leading-7
+                    text-[#2C6E9B]
+                    font-bold
+                ">
+            </div>
+
+            <!-- Submit -->
+
+            <button id="submitBtn" class="
+                    mt-7
+                    w-full
+                    h-16
+                    rounded-[28px]
+                    bg-gradient-to-r
+                    from-[#183B5B]
+                    to-[#2C6E9B]
+                    text-white
+                    text-lg
+                    font-black
+                    shadow-[0_16px_40px_rgba(44,110,155,0.25)]
+                    active:scale-[0.98]
+                    transition
+                ">
+                確認註冊
+            </button>
+
+        </section>
+
+        <!-- Notice -->
+        <section class="mt-6">
+
+            <div class="
+                rounded-[36px]
+                bg-white
+                p-7
+                border
+                border-[#EDF1F6]
+                shadow-sm
+            ">
+
+                <h2 class="
+                    text-2xl
+                    font-black
+                    mb-7
+                ">
+                    注意事項
+                </h2>
+
+                <div class="space-y-5">
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            01
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            每張票券限參加一次活動。
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            02
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            活動期間內請於指定景點完成打卡。
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            03
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            領獎 QR Code 僅供本人使用，請勿轉讓或分享。
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            04
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            活動獎品數量有限，依活動公告為準。
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            05
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            主辦單位保留活動解釋、修改及終止之權利。
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+    </main>
+
+    <!-- Success Modal -->
+
+    <div id="successModal" class="
+            hidden
+            fixed
+            inset-0
+            z-50
+            bg-black/50
+            flex
+            items-center
+            justify-center
+            p-5
+        ">
+
+        <div class="
+            w-full
+            max-w-sm
+            rounded-[36px]
+            bg-white
+            p-8
+            text-center
+            shadow-2xl
+        ">
+
+            <div class="
+                w-24
+                h-24
+                mx-auto
+                rounded-full
+                bg-emerald-50
+                border
+                border-emerald-100
+                flex
+                items-center
+                justify-center
+                text-4xl
+                text-emerald-600
+                font-black
+            ">
+                ✓
+            </div>
+
+            <h2 class="
+                mt-6
+                text-2xl
+                font-black
+                text-slate-800
+            ">
+                註冊完成
+            </h2>
+
+            <p id="successText" class="
+                    mt-4
+                    text-sm
+                    leading-7
+                    text-slate-500
+                ">
+            </p>
+
+            <button id="successCloseBtn" class="
+                    mt-7
+                    w-full
+                    h-12
+                    rounded-2xl
+                    bg-[#2C6E9B]
+                    text-white
+                    font-bold
+                ">
+                確定
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+</body>
+<script type="module" src="../assets/js/register.js">
+</script>
+
+</html>

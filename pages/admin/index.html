@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>本日兌換狀態｜三鶯 GO 活動管理中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: { 500: '#4FA3D9', 700: '#2C6E9B' }, warning: { 500: '#F28C28' } },
+                    borderRadius: { soft: '24px', card: '36px', logo: '32px' },
+                    boxShadow: { card: '0 20px 60px rgba(44,110,155,.12)' }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="assets/css/app.css" />
+</head>
+
+<body data-page="dashboard"
+    class="min-h-screen bg-gradient-to-b from-[#F8FBFD] via-[#F3F7FA] to-[#EDF3F7] text-slate-800">
+    <div class="pointer-events-none fixed right-[-120px] top-[-120px] h-80 w-80 rounded-full bg-sky-200/40 blur-3xl">
+    </div>
+    <div class="pointer-events-none fixed bottom-[-120px] left-[-120px] h-80 w-80 rounded-full bg-cyan-200/30 blur-3xl">
+    </div>
+
+    <div class="relative mx-auto flex min-h-screen w-full max-w-[1440px] flex-col lg:flex-row">
+        <aside id="sidebar"
+            class="no-print fixed inset-y-0 left-0 z-40 w-[290px] -translate-x-full border-r border-white/70 bg-white/80 p-5 shadow-card backdrop-blur-xl transition lg:sticky lg:top-0 lg:h-screen lg:translate-x-0">
+            <div class="mb-8 flex items-center gap-3">
+                <div
+                    class="primary-gradient flex h-14 w-14 items-center justify-center rounded-logo text-xl font-black text-white">
+                    GO</div>
+                <div>
+                    <p class="text-xs font-black tracking-[.28em] text-primary-700">SAN-YING GO</p>
+                    <h1 class="text-xl font-black text-slate-800">活動管理中心</h1>
+                </div>
+            </div>
+            <nav class="space-y-2" aria-label="管理選單"><a href="index.html" data-page="dashboard"
+                    class="nav-link flex w-full items-center rounded-[24px] px-4 py-4 text-sm font-bold text-slate-600 transition hover:bg-sky-100">本日狀態</a>
+                <a href="spots.html" data-page="spots"
+                    class="nav-link flex w-full items-center rounded-[24px] px-4 py-4 text-sm font-bold text-slate-600 transition hover:bg-sky-100">打卡地點</a>
+                <a href="verify.html" data-page="verify"
+                    class="nav-link flex w-full items-center rounded-[24px] px-4 py-4 text-sm font-bold text-slate-600 transition hover:bg-sky-100">打卡核銷</a>
+                <a href="members.html" data-page="members"
+                    class="nav-link flex w-full items-center rounded-[24px] px-4 py-4 text-sm font-bold text-slate-600 transition hover:bg-sky-100">會員管理</a>
+                <a href="import-orders.html" data-page="import"
+                    class="nav-link flex w-full items-center rounded-[24px] px-4 py-4 text-sm font-bold text-slate-600 transition hover:bg-sky-100">訂單匯入</a>
+                <a href="orders.html" data-page="orders"
+                    class="nav-link flex w-full items-center rounded-[24px] px-4 py-4 text-sm font-bold text-slate-600 transition hover:bg-sky-100">訂單查詢</a>
+                <a href="reports.html" data-page="reports"
+                    class="hidden nav-link flex w-full items-center rounded-[24px] px-4 py-4 text-sm font-bold text-slate-600 transition hover:bg-sky-100">下載報表</a>
+            </nav>
+
+        </aside>
+
+        <div id="sidebarBackdrop" class="no-print fixed inset-0 z-30 hidden bg-slate-900/30 backdrop-blur-sm lg:hidden">
+        </div>
+
+        <main class="flex-1 p-4 sm:p-6 lg:p-8">
+            <header
+                class="no-print glass-card sticky top-3 z-20 mb-6 flex items-center justify-between rounded-card px-4 py-4 sm:px-6">
+                <div class="flex items-center gap-3">
+                    <button id="openSidebarBtn"
+                        class="flex h-12 w-12 items-center justify-center rounded-soft bg-slate-50 text-slate-700 lg:hidden"
+                        aria-label="開啟選單">☰</button>
+                    <div>
+                        <p class="text-xs font-black tracking-[.3em] text-primary-700">ACTIVITY ADMIN</p>
+                        <h2 class="text-xl font-black sm:text-2xl">本日兌換狀態</h2>
+                    </div>
+                </div>
+
+            </header>
+
+
+            <section class="space-y-6">
+                <div class="grid gap-5 md:grid-cols-3">
+                    <article class="glass-card rounded-card p-6">
+                        <p class="text-xs font-black tracking-[.3em] text-primary-700">TICKETS</p>
+                        <p id="ticketCount" class="mt-4 text-4xl font-black">0</p>
+                        <p class="mt-2 text-sm text-slate-500">本日購票人數</p>
+                    </article>
+                    <article class="glass-card rounded-card p-6">
+                        <p class="text-xs font-black tracking-[.3em] text-emerald-600">REDEEMED</p>
+                        <p id="redeemCount" class="mt-4 text-4xl font-black">0</p>
+                        <p class="mt-2 text-sm text-slate-500">本日兌換人數</p>
+                    </article>
+                    <article class="glass-card rounded-card p-6">
+                        <p class="text-xs font-black tracking-[.3em] text-warning-500">RATE</p>
+                        <p id="redeemRate" class="mt-4 text-4xl font-black">0%</p>
+                        <p class="mt-2 text-sm text-slate-500">兌換率</p>
+                    </article>
+                </div>
+                <div class="glass-card rounded-card p-5 sm:p-7">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-xs font-black tracking-[.3em] text-primary-700">TODAY LOG</p>
+                            <h3 class="mt-2 text-2xl font-black">今日核銷紀錄</h3>
+                        </div>
+                        <a href="verify.html"
+                            class="primary-gradient inline-flex h-14 items-center justify-center rounded-soft px-6 font-black text-white shadow-lg">前往打卡核銷</a>
+                    </div>
+                    <div id="verifyLogList" class="mt-6 grid gap-4"></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="appModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/35 p-4 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-sm rounded-card p-8 text-center">
+            <div id="modalIcon"
+                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full text-2xl font-black"></div>
+            <h3 id="modalTitle" class="mt-5 text-2xl font-black"></h3>
+            <p id="modalMessage" class="mt-3 text-sm leading-6 text-slate-500"></p>
+            <button id="modalCloseBtn"
+                class="primary-gradient mt-6 h-14 w-full rounded-soft font-black text-white shadow-lg">知道了</button>
+        </div>
+    </div>
+
+    <div id="appToast"
+        class="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 translate-y-6 rounded-full bg-slate-900 px-5 py-3 text-sm font-bold text-white opacity-0 shadow-lg transition no-print">
+    </div>
+
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+
+</html>

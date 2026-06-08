@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content=" width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no " />
+
+    <title>
+        三鶯 GO
+    </title>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js">
+    </script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <style>
+        html,
+        body {
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family:
+                "Noto Sans TC",
+                sans-serif;
+        }
+    </style>
+
+</head>
+
+<body class="bg-[#F5F7FA] text-[#1F2937] min-h-screen">
+
+    <!-- Hero -->
+
+    <section
+        class="relative overflow-hidden bg-gradient-to-br from-[#183B5B] via-[#295A86] to-[#4E89B9] rounded-b-[42px] px-6 pt-10 pb-14 shadow-2xl">
+
+        <!-- Light -->
+
+        <div class="absolute top-0 right-0 w-72 h-72 bg-white/10 blur-3xl rounded-full">
+        </div>
+
+        <div class="relative z-10">
+
+            <!-- Top Action -->
+
+            <div class="absolute top-6 right-6 z-20 flex items-center gap-3">
+
+                <!-- Gift -->
+
+                <button id="profileButton"
+                    class="relative w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-lg">
+
+                    <!-- Badge -->
+
+                    <!--  <div
+                        class="absolute -top-1 -right-1 min-w-[22px] h-[22px] px-1 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center">
+                        2
+                    </div> -->
+
+                    <!-- Icon -->
+
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2 7h20v5H2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 22V7" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M12 7H7.5a2.5 2.5 0 010-5c3 0 4.5 5 4.5 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M12 7h4.5a2.5 2.5 0 100-5c-3 0-4.5 5-4.5 5z" />
+                    </svg> -->
+
+                    <!-- User Icon -->
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M4.5 20.25a8.25 8.25 0 0115 0" />
+                    </svg>
+
+                </button>
+
+
+
+            </div>
+
+
+            <!-- Badge -->
+
+            <div
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur text-cyan-50 text-xs tracking-[0.2em]">
+
+                SANXIA • YINGGE GO TICKET
+
+            </div>
+
+            <!-- Title -->
+
+            <div class="mt-6">
+
+                <h1 class="text-white text-4xl font-black tracking-wide">
+                    三鶯 GO
+                </h1>
+
+                <p class="text-cyan-50/90 mt-4 leading-7 text-sm">
+                    透過景點集章探索三峽與鶯歌，
+                    完成指定文化景點即可兌換活動限定紀念禮。
+                </p>
+
+            </div>
+
+            <!-- Progress -->
+
+            <div class="mt-8 bg-white/10 border border-white/10 backdrop-blur-xl rounded-[28px] p-5">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p id="heroLabel" class="text-cyan-100 text-xs tracking-[0.15em]">
+                            ACTIVITY PROGRESS
+                        </p>
+
+                        <h2 id="heroTitle" class="text-white text-3xl font-black mt-2">
+                            n /n
+                        </h2>
+
+                    </div>
+
+                    <div class="text-right hidden">
+
+                        <p class="text-cyan-100 text-xs">
+                            NEXT SPOT
+                        </p>
+
+                        <p id="NextSPOT" class="text-white font-bold mt-1">
+                            XXXXX
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Progress Bar -->
+
+                <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden mt-6">
+
+                    <div id="progressBar"
+                        class="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-white"
+                        style="width: 100%">
+                    </div>
+
+                </div>
+
+                <!-- Status -->
+
+                <div class="flex items-center justify-between mt-4 text-xs text-cyan-100">
+
+                    <span id="completedText">
+                        已完成 0 個景點
+                    </span>
+
+                    <span id="remainingText">
+                        尚差 0 個景點
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Content -->
+
+    <main class="max-w-md mx-auto px-4 pb-32 -mt-6">
+
+        <!-- Current Mission -->
+
+
+
+
+
+        <!-- Spot List -->
+        <section id="spotList" class="space-y-4 mt-10"> </section>
+
+        <!-- Spot Carousel -->
+
+        <section class="mt-6 overflow-x-auto no-scrollbar">
+
+            <section class="mt-6 px-1">
+                <div id="spotCarousel" class=" flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2 ">
+                </div>
+            </section>
+
+        </section>
+
+        <!-- Reward -->
+
+        <div id="rewardBox">
+        </div>
+    </main>
+
+    <!-- Scanner Modal -->
+    <div id="scanResultModal" class="
+        fixed
+        inset-0
+        z-[60]
+        hidden
+        items-center
+        justify-center
+        bg-black/40
+        p-5
+    ">
+
+        <div class="
+            w-full
+            max-w-sm
+            rounded-[36px]
+            bg-white
+            p-8
+            text-center
+            shadow-2xl
+        ">
+
+            <div id="resultIcon" class="
+                w-24
+                h-24
+                mx-auto
+                rounded-full
+                flex
+                items-center
+                justify-center
+            ">
+            </div>
+
+            <h2 id="resultTitle" class="
+                text-3xl
+                font-black
+                mt-6
+            ">
+            </h2>
+
+            <p id="resultMessage" class="
+                mt-4
+                text-slate-500
+                leading-8
+            ">
+            </p>
+
+        </div>
+
+    </div>
+    <div id="scannerModal" class="
+         fixed
+        inset-0
+        hidden
+        z-50
+        bg-black/50
+        items-center
+        justify-center
+        p-5
+    ">
+
+        <div class="
+            w-full
+            max-w-sm
+            bg-white
+            rounded-[32px]
+            overflow-hidden
+            shadow-2xl
+        ">
+
+            <div class="
+                flex
+                justify-between
+                items-center
+                p-5
+                border-b
+            ">
+
+                <h2 class="font-bold">
+                    掃描景點 QRCode
+                </h2>
+
+                <button id="closeScanner">
+                    ✕
+                </button>
+
+            </div>
+
+            <div id="reader" class="w-full h-[50vh]">
+            </div>
+
+            <div class="
+                p-4
+                text-center
+                text-sm
+                text-slate-500
+            ">
+                將 QRCode 對準掃描框
+            </div>
+
+        </div>
+
+    </div>
+    <!-- Fixed Checkin Button -->
+
+    <div class="
+    fixed
+    bottom-0
+    left-0
+    right-0
+    z-40
+    px-4
+    pb-5
+    pt-3
+    bg-gradient-to-t
+    from-white
+    via-white/95
+    to-transparent
+">
+
+        <button id="checkBtn" class="
+            w-full
+            max-w-md
+            mx-auto
+            h-16
+            rounded-[24px]
+            bg-gradient-to-r
+            from-[#4FA3D9]
+            to-[#2C6E9B]
+            text-white
+            font-black
+            text-lg
+            shadow-[0_12px_30px_rgba(44,110,155,0.35)]
+            flex
+            items-center
+            justify-center
+            gap-3
+            active:scale-[0.98]
+            transition
+        ">
+
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
+
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+
+            點我打卡
+
+        </button>
+
+    </div>
+
+    <script type="module" src="../assets/js/progress.js">
+    </script>
+</body>
+
+</html>
