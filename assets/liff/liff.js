@@ -1,61 +1,40 @@
-
 const LIFF_ID = "2010150440-sbW0urAy";
 
-
 const API_BASE_URL =
-    "https://9f4d-59-124-220-148.ngrok-free.app";
-
-
+  "https://ab89-2001-b011-3-11e3-48c-6ba4-3f87-5184.ngrok-free.app";
 
 async function init() {
+  await liff.init({
+    liffId: LIFF_ID,
+  });
 
-    await liff.init({
-        liffId: LIFF_ID
-    });
+  if (!liff.isLoggedIn()) {
+    liff.login();
 
-    if (!liff.isLoggedIn()) {
+    return;
+  }
 
-        liff.login();
+  const profile = await liff.getProfile();
 
-        return;
-    }
+  console.log(profile);
 
-    const profile =
-        await liff.getProfile();
+  document.getElementById("userId").value = profile.userId;
 
-    console.log(profile);
+  document.getElementById("displayName").value = profile.displayName;
 
-    document.getElementById(
-        "userId"
-    ).value = profile.userId;
-
-    document.getElementById(
-        "displayName"
-    ).value = profile.displayName;
-
-    await loadUser(
-        profile.userId
-    );
+  await loadUser(profile.userId);
 }
 
 async function loadUser(userId) {
+  const response = await fetch(`${API_BASE_URL}/api/users/${userId}`);
 
-    const response = await fetch(
-        `${API_BASE_URL}/api/users/${userId}`
-    );
+  if (!response.ok) {
+    return;
+  }
 
-    if (!response.ok) {
-        return;
-    }
+  const data = await response.json();
 
-    const data =
-        await response.json();
-
-    document.getElementById(
-        "carNo"
-    ).value =
-        data.carNo ?? "";
+  document.getElementById("carNo").value = data.carNo ?? "";
 }
 
 init();
-

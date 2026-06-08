@@ -4,7 +4,7 @@ import {
 } from "../liff/liff-init.js";
 
 let API_BASE_URL =
-    "https://9f4d-59-124-220-148.ngrok-free.app";
+    "https://ab89-2001-b011-3-11e3-48c-6ba4-3f87-5184.ngrok-free.app";
 let html5QrCode = null;
 let isScanningLocked = false;
 let scanResultTimer = null;

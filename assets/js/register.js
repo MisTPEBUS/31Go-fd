@@ -1,18 +1,13 @@
-import {
-    initLiff
-} from "../liff/liff-init.js";
+import { initLiff } from "../liff/liff-init.js";
 
 const API_BASE_URL =
-    "https://9f4d-59-124-220-148.ngrok-free.app";
+  "https://ab89-2001-b011-3-11e3-48c-6ba4-3f87-5184.ngrok-free.app";
 
-const CAMPAIGN_ID =
-    "2750ef49-8292-42fa-9660-273c46678aad";
-
+const CAMPAIGN_ID = "2750ef49-8292-42fa-9660-273c46678aad";
 
 let html5QrCode = null;
 
-let currentMode =
-    "manual";
+let currentMode = "manual";
 
 let profile = null;
 
@@ -22,41 +17,29 @@ let profile = null;
 |--------------------------------------------------------------------------
 */
 
-const manualModeBtn =
-    document.getElementById("manualModeBtn");
+const manualModeBtn = document.getElementById("manualModeBtn");
 
-const scanModeBtn =
-    document.getElementById("scanModeBtn");
+const scanModeBtn = document.getElementById("scanModeBtn");
 
-const manualPanel =
-    document.getElementById("manualPanel");
+const manualPanel = document.getElementById("manualPanel");
 
-const scanPanel =
-    document.getElementById("scanPanel");
+const scanPanel = document.getElementById("scanPanel");
 
-const startScanBtn =
-    document.getElementById("startScanBtn");
+const startScanBtn = document.getElementById("startScanBtn");
 
-const scannerContainer =
-    document.getElementById("scannerContainer");
+const scannerContainer = document.getElementById("scannerContainer");
 
-const ticketNoInput =
-    document.getElementById("ticketNoInput");
+const ticketNoInput = document.getElementById("ticketNoInput");
 
-const resultMessage =
-    document.getElementById("resultMessage");
+const resultMessage = document.getElementById("resultMessage");
 
-const submitBtn =
-    document.getElementById("submitBtn");
+const submitBtn = document.getElementById("submitBtn");
 
-const successModal =
-    document.getElementById("successModal");
+const successModal = document.getElementById("successModal");
 
-const successText =
-    document.getElementById("successText");
+const successText = document.getElementById("successText");
 
-const successCloseBtn =
-    document.getElementById("successCloseBtn");
+const successCloseBtn = document.getElementById("successCloseBtn");
 
 /*
 |--------------------------------------------------------------------------
@@ -65,67 +48,54 @@ const successCloseBtn =
 */
 
 async function init() {
+  try {
+    profile = await initLiff();
 
-    try {
+    if (!profile) {
+      showMessage("LIFF 初始化失敗，請重新開啟頁面。");
 
-        profile =
-            await initLiff();
+      return;
+    }
 
-        if (!profile) {
+    console.log("profile", profile);
 
-            showMessage("LIFF 初始化失敗，請重新開啟頁面。");
+    const userId = profile.userId;
 
-            return;
-        }
-
-        console.log("profile", profile);
-
-        const userId =
-            profile.userId;
-
-        /*
+    /*
         |--------------------------------------------------------------------------
         | 讀取活動狀態
         |--------------------------------------------------------------------------
         */
 
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/activity/current/${userId}`,
-                {
-                    method: "GET",
+    const response = await fetch(
+      `${API_BASE_URL}/api/activity/current/${userId}`,
+      {
+        method: "GET",
 
-                    headers: {
-                        "Content-Type":
-                            "application/json",
+        headers: {
+          "Content-Type": "application/json",
 
-                        "ngrok-skip-browser-warning":
-                            "true"
-                    }
-                }
-            );
+          "ngrok-skip-browser-warning": "true",
+        },
+      },
+    );
 
-        if (!response.ok) {
+    if (!response.ok) {
+      showMessage("活動狀態讀取失敗");
 
-            showMessage("活動狀態讀取失敗");
-
-            return;
-        }
-
-        const data =
-            await response.json();
-
-        console.log("activity current", data);
-
-        bindEvents();
-
+      return;
     }
-    catch (error) {
 
-        console.error(error);
+    const data = await response.json();
 
-        showMessage("LIFF 初始化失敗");
-    }
+    console.log("activity current", data);
+
+    bindEvents();
+  } catch (error) {
+    console.error(error);
+
+    showMessage("LIFF 初始化失敗");
+  }
 }
 
 init();
@@ -137,42 +107,21 @@ init();
 */
 
 function bindEvents() {
+  manualModeBtn?.addEventListener("click", () => switchMode("manual"));
 
-    manualModeBtn?.addEventListener(
-        "click",
-        () => switchMode("manual")
-    );
+  scanModeBtn?.addEventListener("click", () => switchMode("scan"));
 
-    scanModeBtn?.addEventListener(
-        "click",
-        () => switchMode("scan")
-    );
+  ticketNoInput?.addEventListener("input", formatTicketNo);
 
-    ticketNoInput?.addEventListener(
-        "input",
-        formatTicketNo
-    );
+  startScanBtn?.addEventListener("click", startTicketScanner);
 
-    startScanBtn?.addEventListener(
-        "click",
-        startTicketScanner
-    );
+  submitBtn?.addEventListener("click", submitRegister);
 
-    submitBtn?.addEventListener(
-        "click",
-        submitRegister
-    );
+  successCloseBtn?.addEventListener("click", () => {
+    successModal.classList.add("hidden");
 
-    successCloseBtn?.addEventListener(
-        "click",
-        () => {
-
-            successModal.classList.add("hidden");
-
-            window.location.href =
-                `./progress.html?campaignId=${CAMPAIGN_ID}`;
-        }
-    );
+    window.location.href = `./progress.html?campaignId=${CAMPAIGN_ID}`;
+  });
 }
 
 /*
@@ -182,34 +131,31 @@ function bindEvents() {
 */
 
 function switchMode(mode) {
+  currentMode = mode;
 
-    currentMode =
-        mode;
+  if (mode === "manual") {
+    manualPanel.classList.remove("hidden");
 
-    if (mode === "manual") {
-
-        manualPanel.classList.remove("hidden");
-
-        scanPanel.classList.add("hidden");
-
-        manualModeBtn.className =
-            "h-12 rounded-2xl bg-white text-[#2C6E9B] font-black shadow-sm transition";
-
-        scanModeBtn.className =
-            "h-12 rounded-2xl text-slate-500 font-black transition";
-
-        return;
-    }
-
-    scanPanel.classList.remove("hidden");
-
-    manualPanel.classList.add("hidden");
-
-    scanModeBtn.className =
-        "h-12 rounded-2xl bg-white text-[#2C6E9B] font-black shadow-sm transition";
+    scanPanel.classList.add("hidden");
 
     manualModeBtn.className =
-        "h-12 rounded-2xl text-slate-500 font-black transition";
+      "h-12 rounded-2xl bg-white text-[#2C6E9B] font-black shadow-sm transition";
+
+    scanModeBtn.className =
+      "h-12 rounded-2xl text-slate-500 font-black transition";
+
+    return;
+  }
+
+  scanPanel.classList.remove("hidden");
+
+  manualPanel.classList.add("hidden");
+
+  scanModeBtn.className =
+    "h-12 rounded-2xl bg-white text-[#2C6E9B] font-black shadow-sm transition";
+
+  manualModeBtn.className =
+    "h-12 rounded-2xl text-slate-500 font-black transition";
 }
 
 /*
@@ -219,37 +165,20 @@ function switchMode(mode) {
 */
 
 function formatTicketNo() {
-
-    ticketNoInput.value =
-        ticketNoInput
-            .value
-            .toUpperCase()
-            .replace(
-                /[^A-Z0-9]/g,
-                ""
-            )
-            .slice(
-                0,
-                10
-            );
+  ticketNoInput.value = ticketNoInput.value
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 10);
 }
 
 function getOrderNo() {
+  const value = ticketNoInput.value.trim().toUpperCase();
 
-    const value =
-        ticketNoInput
-            .value
-            .trim()
-            .toUpperCase();
-
-    return `PO-${value}`;
+  return `PO-${value}`;
 }
 
 function isValidOrderNo(orderNo) {
-
-    return /^PO-[A-Z0-9]{10}$/.test(
-        orderNo
-    );
+  return /^PO-[A-Z0-9]{10}$/.test(orderNo);
 }
 
 /*
@@ -259,192 +188,119 @@ function isValidOrderNo(orderNo) {
 */
 
 async function startTicketScanner() {
+  try {
+    scannerContainer.classList.remove("hidden");
 
-    try {
+    scannerContainer.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
 
-        scannerContainer.classList.remove("hidden");
+    startScanBtn.disabled = true;
 
-        scannerContainer.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
+    startScanBtn.innerText = "掃描中...";
 
-        startScanBtn.disabled =
-            true;
-
-        startScanBtn.innerText =
-            "掃描中...";
-
-        if (html5QrCode) {
-
-            await stopScanner();
-        }
-
-        html5QrCode =
-            new Html5Qrcode("reader");
-
-        await html5QrCode.start(
-            {
-                facingMode:
-                    "environment"
-            },
-            {
-                fps: 10,
-                qrbox: 240
-            },
-            async decodedText => {
-
-                await handleScanSuccess(
-                    decodedText
-                );
-            }
-        );
-
+    if (html5QrCode) {
+      await stopScanner();
     }
-    catch (error) {
 
-        console.error(error);
+    html5QrCode = new Html5Qrcode("reader");
 
-        showMessage(
-            "無法開啟相機，請確認瀏覽器權限。"
-        );
-
-        startScanBtn.disabled =
-            false;
-
-        startScanBtn.innerText =
-            "開啟相機掃描";
-    }
-}
-
-async function handleScanSuccess(
-    decodedText
-) {
-
-    try {
-
-        const orderNo =
-            await getTicketCodeFromQr(
-                decodedText
-            );
-
-        const ticketNumber =
-            orderNo.replace(
-                /^PO-/,
-                ""
-            );
-
-        ticketNoInput.value =
-            ticketNumber;
-
-        showMessage(
-            `已取得票號：${orderNo}`
-        );
-
-        await stopScanner();
-
-        scannerContainer.classList.add(
-            "hidden"
-        );
-
-        startScanBtn.disabled =
-            false;
-
-        startScanBtn.innerText =
-            "重新掃描";
-
-        switchMode(
-            "manual"
-        );
-
-    }
-    catch (error) {
-
-        await stopScanner();
-
-        scannerContainer.classList.add(
-            "hidden"
-        );
-
-        startScanBtn.disabled =
-            false;
-
-        startScanBtn.innerText =
-            "重新掃描";
-
-        showMessage(
-            error.message ||
-            "車票不存在"
-        );
-    }
-}
-
-async function getTicketCodeFromQr(
-    qrTicketCode
-) {
-
-    const response =
-        await fetch(
-            `${API_BASE_URL}/api/activity/register/Qr-Ticket-check`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "ngrok-skip-browser-warning":
-                        "true"
-                },
-                body: JSON.stringify({
-                    qrTicketCode
-                })
-            }
-        );
-
-    const result =
-        await response.json();
-
-    console.log(
-        "QRCode Check Result",
-        result
+    await html5QrCode.start(
+      {
+        facingMode: "environment",
+      },
+      {
+        fps: 10,
+        qrbox: 240,
+      },
+      async (decodedText) => {
+        await handleScanSuccess(decodedText);
+      },
     );
+  } catch (error) {
+    console.error(error);
 
-    if (
-        !response.ok ||
-        !result.success
-    ) {
+    showMessage("無法開啟相機，請確認瀏覽器權限。");
 
-        throw new Error(
-            result.message ||
-            "查無票券資料"
-        );
-    }
+    startScanBtn.disabled = false;
 
-    return result.data.redeemCode;
+    startScanBtn.innerText = "開啟相機掃描";
+  }
+}
+
+async function handleScanSuccess(decodedText) {
+  try {
+    const orderNo = await getTicketCodeFromQr(decodedText);
+
+    const ticketNumber = orderNo.replace(/^PO-/, "");
+
+    ticketNoInput.value = ticketNumber;
+
+    showMessage(`已取得票號：${orderNo}`);
+
+    await stopScanner();
+
+    scannerContainer.classList.add("hidden");
+
+    startScanBtn.disabled = false;
+
+    startScanBtn.innerText = "重新掃描";
+
+    switchMode("manual");
+  } catch (error) {
+    await stopScanner();
+
+    scannerContainer.classList.add("hidden");
+
+    startScanBtn.disabled = false;
+
+    startScanBtn.innerText = "重新掃描";
+
+    showMessage(error.message || "車票不存在");
+  }
+}
+
+async function getTicketCodeFromQr(qrTicketCode) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/activity/register/Qr-Ticket-check`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      body: JSON.stringify({
+        qrTicketCode,
+      }),
+    },
+  );
+
+  const result = await response.json();
+
+  console.log("QRCode Check Result", result);
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || "查無票券資料");
+  }
+
+  return result.data.redeemCode;
 }
 
 async function stopScanner() {
+  if (!html5QrCode) {
+    return;
+  }
 
-    if (!html5QrCode) {
-        return;
-    }
+  try {
+    await html5QrCode.stop();
+  } catch {}
 
-    try {
+  try {
+    await html5QrCode.clear();
+  } catch {}
 
-        await html5QrCode.stop();
-
-    }
-    catch {
-    }
-
-    try {
-
-        await html5QrCode.clear();
-
-    }
-    catch {
-    }
-
-    html5QrCode =
-        null;
+  html5QrCode = null;
 }
 
 /*
@@ -454,125 +310,85 @@ async function stopScanner() {
 */
 
 async function submitRegister() {
+  hideMessage();
 
-    hideMessage();
+  const orderNo = getOrderNo();
 
-    const orderNo =
-        getOrderNo();
+  if (!isValidOrderNo(orderNo)) {
+    showMessage("請輸入正確票號格式：PO-xxxxxxxxxx");
 
-    if (!isValidOrderNo(orderNo)) {
+    return;
+  }
 
-        showMessage(
-            "請輸入正確票號格式：PO-xxxxxxxxxx"
-        );
+  if (!profile) {
+    showMessage("LINE 使用者資料讀取失敗，請重新開啟頁面。");
 
-        return;
+    return;
+  }
+
+  submitBtn.disabled = true;
+
+  submitBtn.innerText = "註冊中...";
+
+  const payload = {
+    LineUserId: profile.userId,
+
+    Name: profile.displayName || "",
+
+    OrderNo: orderNo,
+
+    TicketNo: "",
+
+    CampaignId: CAMPAIGN_ID,
+  };
+
+  console.log("payload", payload);
+
+  try {
+    const registerResponse = await fetch(
+      `${API_BASE_URL}/api/activity/register`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+
+          "ngrok-skip-browser-warning": "true",
+        },
+
+        body: JSON.stringify(payload),
+      },
+    );
+
+    const registerData = await registerResponse.json();
+
+    console.log("registerData", registerData);
+
+    if (!registerResponse.ok) {
+      showMessage(registerData.message || "報名失敗");
+
+      return;
     }
 
-    if (!profile) {
+    if (registerData.success === false) {
+      showMessage(registerData.message || "報名失敗");
 
-        showMessage(
-            "LINE 使用者資料讀取失敗，請重新開啟頁面。"
-        );
-
-        return;
+      return;
     }
 
-    submitBtn.disabled =
-        true;
+    successText.innerText =
+      registerData.message || `車票號碼 ${orderNo} 已完成註冊。`;
 
-    submitBtn.innerText =
-        "註冊中...";
+    successModal.classList.remove("hidden");
+  } catch (error) {
+    console.error(error);
 
-    const payload = {
+    showMessage("系統發生錯誤");
+  } finally {
+    submitBtn.disabled = false;
 
-        LineUserId:
-            profile.userId,
-
-        Name:
-            profile.displayName || "",
-
-        OrderNo:
-            orderNo,
-
-        TicketNo:
-            "",
-
-        CampaignId:
-            CAMPAIGN_ID
-    };
-
-    console.log("payload", payload);
-
-    try {
-
-        const registerResponse =
-            await fetch(
-                `${API_BASE_URL}/api/activity/register`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-
-                        "ngrok-skip-browser-warning":
-                            "true"
-                    },
-
-                    body:
-                        JSON.stringify(payload)
-                }
-            );
-
-        const registerData =
-            await registerResponse.json();
-
-        console.log("registerData", registerData);
-
-        if (!registerResponse.ok) {
-
-            showMessage(
-                registerData.message ||
-                "報名失敗"
-            );
-
-            return;
-        }
-
-        if (registerData.success === false) {
-
-            showMessage(
-                registerData.message ||
-                "報名失敗"
-            );
-
-            return;
-        }
-
-        successText.innerText =
-            registerData.message ||
-            `車票號碼 ${orderNo} 已完成註冊。`;
-
-        successModal.classList.remove("hidden");
-
-    }
-    catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            "系統發生錯誤"
-        );
-    }
-    finally {
-
-        submitBtn.disabled =
-            false;
-
-        submitBtn.innerText =
-            "確認註冊";
-    }
+    submitBtn.innerText = "確認註冊";
+  }
 }
 
 /*
@@ -582,17 +398,13 @@ async function submitRegister() {
 */
 
 function showMessage(message) {
+  resultMessage.innerText = message;
 
-    resultMessage.innerText =
-        message;
-
-    resultMessage.classList.remove("hidden");
+  resultMessage.classList.remove("hidden");
 }
 
 function hideMessage() {
+  resultMessage.innerText = "";
 
-    resultMessage.innerText =
-        "";
-
-    resultMessage.classList.add("hidden");
+  resultMessage.classList.add("hidden");
 }

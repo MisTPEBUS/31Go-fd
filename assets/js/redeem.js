@@ -1,20 +1,15 @@
-import {
-    initLiff
-} from "../liff/liff-init.js";
+import { initLiff } from "../liff/liff-init.js";
 
 let API_BASE_URL =
-    "https://9f4d-59-124-220-148.ngrok-free.app";
+  "https://ab89-2001-b011-3-11e3-48c-6ba4-3f87-5184.ngrok-free.app";
 
 let html5QrCode = null;
 
-let currentQrCode =
-    null;
+let currentQrCode = null;
 
-let currentLineUserId =
-    null;
+let currentLineUserId = null;
 
-let countdownTimer =
-    null;
+let countdownTimer = null;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,45 +17,21 @@ let countdownTimer =
 |--------------------------------------------------------------------------
 */
 
-const startScanBtn =
-    document.getElementById(
-        "startScanBtn"
-    );
+const startScanBtn = document.getElementById("startScanBtn");
 
-const scanner =
-    document.getElementById(
-        "scanner"
-    );
+const scanner = document.getElementById("scanner");
 
-const scanResult =
-    document.getElementById(
-        "scanResult"
-    );
+const scanResult = document.getElementById("scanResult");
 
-const loadingModal =
-    document.getElementById(
-        "loadingModal"
-    );
+const loadingModal = document.getElementById("loadingModal");
 
-const otpModal =
-    document.getElementById(
-        "otpModal"
-    );
+const otpModal = document.getElementById("otpModal");
 
-const resultModal =
-    document.getElementById(
-        "resultModal"
-    );
+const resultModal = document.getElementById("resultModal");
 
-const countdownElement =
-    document.getElementById(
-        "countdown"
-    );
+const countdownElement = document.getElementById("countdown");
 
-const otpInputs =
-    document.querySelectorAll(
-        ".otp"
-    );
+const otpInputs = document.querySelectorAll(".otp");
 
 /*
 |--------------------------------------------------------------------------
@@ -69,26 +40,15 @@ const otpInputs =
 */
 
 async function init() {
+  try {
+    const profile = await initLiff();
 
-    try {
+    currentLineUserId = profile.userId;
 
-        const profile =
-            await initLiff();
-
-        currentLineUserId =
-            profile.userId;
-
-        console.log(
-            profile
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            error
-        );
-    }
+    console.log(profile);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 init();
@@ -99,66 +59,41 @@ init();
 |--------------------------------------------------------------------------
 */
 
-startScanBtn?.addEventListener(
-    "click",
-    startScanner
-);
+startScanBtn?.addEventListener("click", startScanner);
 
 async function startScanner() {
+  try {
+    scanner.classList.remove("hidden");
 
-    try {
+    html5QrCode = new Html5Qrcode("scanner");
 
-        scanner.classList.remove(
-            "hidden"
-        );
+    await html5QrCode.start(
+      {
+        facingMode: "environment",
+      },
+      {
+        fps: 10,
+        qrbox: 240,
+      },
+      onScanSuccess,
+    );
+  } catch (error) {
+    console.error(error);
 
-        html5QrCode =
-            new Html5Qrcode(
-                "scanner"
-            );
-
-        await html5QrCode.start(
-            {
-                facingMode:
-                    "environment"
-            },
-            {
-                fps: 10,
-                qrbox: 240
-            },
-            onScanSuccess
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-        showResult(
-            false,
-            "無法開啟相機"
-        );
-    }
+    showResult(false, "無法開啟相機");
+  }
 }
 
-async function onScanSuccess(
-    decodedText
-) {
+async function onScanSuccess(decodedText) {
+  currentQrCode = decodedText;
 
-    currentQrCode =
-        decodedText;
+  scanResult.innerText = decodedText;
 
-    scanResult.innerText =
-        decodedText;
+  if (html5QrCode) {
+    await html5QrCode.stop();
+  }
 
-    if (html5QrCode) {
-
-        await html5QrCode.stop();
-    }
-
-    await sendOtp();
+  await sendOtp();
 }
 
 /*
@@ -168,52 +103,36 @@ async function onScanSuccess(
 */
 
 async function sendOtp() {
+  try {
+    showLoading();
 
-    try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/admin/TicketCheck/${currentLineUserId}/${currentQrCode}/打卡核銷`,
+      {
+        method: "POST",
+      },
+    );
 
-        showLoading();
+    const result = await response.json();
 
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/admin/TicketCheck/${currentLineUserId}/${currentQrCode}/打卡核銷`,
-                {
-                    method: "POST"
-                }
-            );
+    hideLoading();
 
-        const result =
-            await response.json();
+    if (!response.ok) {
+      showResult(false, result.message);
 
-        hideLoading();
-
-        if (!response.ok) {
-
-            showResult(
-                false,
-                result.message
-            );
-
-            return;
-        }
-
-        showOtpModal();
-
-        startCountdown();
-
+      return;
     }
-    catch (error) {
 
-        hideLoading();
+    showOtpModal();
 
-        console.error(
-            error
-        );
+    startCountdown();
+  } catch (error) {
+    hideLoading();
 
-        showResult(
-            false,
-            "發送驗證碼失敗"
-        );
-    }
+    console.error(error);
+
+    showResult(false, "發送驗證碼失敗");
+  }
 }
 
 /*
@@ -222,108 +141,51 @@ async function sendOtp() {
 |--------------------------------------------------------------------------
 */
 
-otpInputs.forEach(
-    (
-        input,
-        index
-    ) => {
-
-        input.addEventListener(
-            "input",
-            () => {
-
-                if (
-                    input.value &&
-                    index <
-                    otpInputs.length - 1
-                ) {
-
-                    otpInputs[
-                        index + 1
-                    ].focus();
-                }
-
-            }
-        );
-
+otpInputs.forEach((input, index) => {
+  input.addEventListener("input", () => {
+    if (input.value && index < otpInputs.length - 1) {
+      otpInputs[index + 1].focus();
     }
-);
+  });
+});
 
-document
-    .getElementById(
-        "verifyBtn"
-    )
-    ?.addEventListener(
-        "click",
-        verifyOtp
-    );
+document.getElementById("verifyBtn")?.addEventListener("click", verifyOtp);
 
 async function verifyOtp() {
+  const otp = Array.from(otpInputs)
+    .map((input) => input.value)
+    .join("");
 
-    const otp =
-        Array.from(
-            otpInputs
-        )
-            .map(
-                input =>
-                    input.value
-            )
-            .join("");
+  if (otp.length !== 4) {
+    showResult(false, "請輸入完整驗證碼");
 
-    if (otp.length !== 4) {
+    return;
+  }
 
-        showResult(
-            false,
-            "請輸入完整驗證碼"
-        );
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/admin/Login-Verify/${currentLineUserId}/打卡核銷/${otp}`,
+      {
+        method: "POST",
+      },
+    );
 
-        return;
+    const result = await response.json();
+
+    otpModal.classList.add("hidden");
+
+    if (!response.ok) {
+      showResult(false, result.message);
+
+      return;
     }
 
-    try {
+    showResult(true, "驗證成功，完成打卡核銷");
+  } catch (error) {
+    console.error(error);
 
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/admin/Login-Verify/${currentLineUserId}/打卡核銷/${otp}`,
-                {
-                    method: "POST"
-                }
-            );
-
-        const result =
-            await response.json();
-
-        otpModal.classList.add(
-            "hidden"
-        );
-
-        if (!response.ok) {
-
-            showResult(
-                false,
-                result.message
-            );
-
-            return;
-        }
-
-        showResult(
-            true,
-            "驗證成功，完成打卡核銷"
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-        showResult(
-            false,
-            "驗證失敗"
-        );
-    }
+    showResult(false, "驗證失敗");
+  }
 }
 
 /*
@@ -333,46 +195,25 @@ async function verifyOtp() {
 */
 
 function startCountdown() {
+  let seconds = 300;
 
-    let seconds =
-        300;
+  clearInterval(countdownTimer);
 
-    clearInterval(
-        countdownTimer
-    );
+  countdownTimer = setInterval(() => {
+    const min = Math.floor(seconds / 60);
 
-    countdownTimer =
-        setInterval(
-            () => {
+    const sec = seconds % 60;
 
-                const min =
-                    Math.floor(
-                        seconds / 60
-                    );
+    countdownElement.innerText = `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
 
-                const sec =
-                    seconds % 60;
+    seconds--;
 
-                countdownElement.innerText =
-                    `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    if (seconds < 0) {
+      clearInterval(countdownTimer);
 
-                seconds--;
-
-                if (
-                    seconds < 0
-                ) {
-
-                    clearInterval(
-                        countdownTimer
-                    );
-
-                    countdownElement.innerText =
-                        "驗證碼已失效";
-                }
-
-            },
-            1000
-        );
+      countdownElement.innerText = "驗證碼已失效";
+    }
+  }, 1000);
 }
 
 /*
@@ -382,21 +223,11 @@ function startCountdown() {
 */
 
 function showLoading() {
-
-    loadingModal
-        .classList
-        .remove(
-            "hidden"
-        );
+  loadingModal.classList.remove("hidden");
 }
 
 function hideLoading() {
-
-    loadingModal
-        .classList
-        .add(
-            "hidden"
-        );
+  loadingModal.classList.add("hidden");
 }
 
 /*
@@ -406,14 +237,9 @@ function hideLoading() {
 */
 
 function showOtpModal() {
+  otpModal.classList.remove("hidden");
 
-    otpModal
-        .classList
-        .remove(
-            "hidden"
-        );
-
-    otpInputs[0]?.focus();
+  otpInputs[0]?.focus();
 }
 
 /*
@@ -422,51 +248,20 @@ function showOtpModal() {
 |--------------------------------------------------------------------------
 */
 
-function showResult(
-    success,
-    message
-) {
+function showResult(success, message) {
+  const title = document.getElementById("resultTitle");
 
-    const title =
-        document.getElementById(
-            "resultTitle"
-        );
+  const content = document.getElementById("resultMessage");
 
-    const content =
-        document.getElementById(
-            "resultMessage"
-        );
+  title.innerText = success ? "核銷成功" : "核銷失敗";
 
-    title.innerText =
-        success
-            ? "核銷成功"
-            : "核銷失敗";
+  content.innerText = message;
 
-    content.innerText =
-        message;
-
-    resultModal
-        .classList
-        .remove(
-            "hidden"
-        );
+  resultModal.classList.remove("hidden");
 }
 
-document
-    .getElementById(
-        "closeResultBtn"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
+document.getElementById("closeResultBtn")?.addEventListener("click", () => {
+  resultModal.classList.add("hidden");
 
-            resultModal
-                .classList
-                .add(
-                    "hidden"
-                );
-
-            location.reload();
-
-        }
-    );
+  location.reload();
+});
