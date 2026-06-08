@@ -16,7 +16,7 @@ async function init() {
 
     const lineUserId = profile.userId;
 
-    const response = await fetch(
+    /*  const response = await fetch(
       `${API_BASE_URL}/api/user/info/${lineUserId}`,
       {
         method: "GET",
@@ -31,7 +31,7 @@ async function init() {
     const data = resData.data;
 
     const activityCode = data.activityCode?.toString().padStart(8, "0");
-
+ */
     document
       .getElementById("registerCampaignBtn")
       ?.addEventListener("click", () => {
