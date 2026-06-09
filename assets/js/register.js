@@ -67,7 +67,7 @@ async function init() {
         |--------------------------------------------------------------------------
         */
 
-    const response = await fetch(
+    /* const response = await fetch(
       `${API_BASE_URL}/api/activity/current/${userId}`,
       {
         method: "GET",
@@ -78,9 +78,9 @@ async function init() {
           "ngrok-skip-browser-warning": "true",
         },
       },
-    );
+    ); */
 
-    if (!response.ok) {
+    /* if (!response.ok) {
       showMessage("活動狀態讀取失敗");
 
       return;
@@ -88,7 +88,7 @@ async function init() {
 
     const data = await response.json();
 
-    console.log("activity current", data);
+    console.log("activity current", data); */
 
     bindEvents();
   } catch (error) {
@@ -108,18 +108,12 @@ init();
 
 function bindEvents() {
   manualModeBtn?.addEventListener("click", () => switchMode("manual"));
-
   scanModeBtn?.addEventListener("click", () => switchMode("scan"));
-
   ticketNoInput?.addEventListener("input", formatTicketNo);
-
   startScanBtn?.addEventListener("click", startTicketScanner);
-
   submitBtn?.addEventListener("click", submitRegister);
-
   successCloseBtn?.addEventListener("click", () => {
     successModal.classList.add("hidden");
-
     window.location.href = `./progress.html?campaignId=${CAMPAIGN_ID}`;
   });
 }
@@ -277,8 +271,6 @@ async function getTicketCodeFromQr(qrTicketCode) {
   );
 
   const result = await response.json();
-
-  console.log("QRCode Check Result", result);
 
   if (!response.ok || !result.success) {
     throw new Error(result.message || "查無票券資料");

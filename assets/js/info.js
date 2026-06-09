@@ -1,10 +1,7 @@
-
-import {
-    initLiff
-} from "../liff/liff-init.js";
+import { initLiff } from "../liff/liff-init.js";
 
 const API_BASE_URL =
-    "https://ab89-2001-b011-3-11e3-48c-6ba4-3f87-5184.ngrok-free.app";
+  "https://ab89-2001-b011-3-11e3-48c-6ba4-3f87-5184.ngrok-free.app";
 let html5QrCode = null;
 /*
 |--------------------------------------------------------------------------
@@ -26,20 +23,11 @@ let isAgreeNotice = false;
 |--------------------------------------------------------------------------
 */
 
-const noticeModal =
-    document.getElementById(
-        "noticeModal"
-    );
+const noticeModal = document.getElementById("noticeModal");
 
-const confirmNoticeBtn =
-    document.getElementById(
-        "confirmNoticeBtn"
-    );
+const confirmNoticeBtn = document.getElementById("confirmNoticeBtn");
 
-const cancelNoticeBtn =
-    document.getElementById(
-        "cancelNoticeBtn"
-    );
+const cancelNoticeBtn = document.getElementById("cancelNoticeBtn");
 
 /*
 |--------------------------------------------------------------------------
@@ -47,178 +35,98 @@ const cancelNoticeBtn =
 |--------------------------------------------------------------------------
 */
 
-confirmNoticeBtn?.addEventListener(
-    "click",
-    () => {
+confirmNoticeBtn?.addEventListener("click", () => {
+  isAgreeNotice = true;
 
-        isAgreeNotice = true;
+  noticeModal.classList.add("hidden");
+});
 
-        noticeModal.classList.add(
-            "hidden"
-        );
-    }
-);
+cancelNoticeBtn?.addEventListener("click", () => {
+  if (window.liff) {
+    liff.closeWindow();
 
-cancelNoticeBtn?.addEventListener(
-    "click",
-    () => {
+    return;
+  }
 
-        if (window.liff) {
-
-            liff.closeWindow();
-
-            return;
-        }
-
-        window.history.back();
-    }
-);
+  window.history.back();
+});
 
 async function init() {
-    try {
+  try {
+    const profile = await initLiff();
 
-        const profile =
-            await initLiff();
-
-        if (!profile) {
-            return;
-        }
-
-        console.log(profile);
-
-        const lineUserId =
-            profile.userId;
-
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/user/info/${lineUserId}`,
-                {
-                    method: "GET",
-
-                    headers: {
-                        "ngrok-skip-browser-warning":
-                            "true"
-                    }
-                }
-            );
-        const resData =
-            await response.json();
-
-        const data =
-            resData.data;
-
-        const activityCode =
-            data.activityCode
-                ?.toString()
-                .padStart(8, "0");
-
-        document
-            .getElementById(
-                "coverImage"
-            )
-            .src =
-            profile.pictureUrl;
-
-        document
-            .getElementById(
-                "avatarImage"
-            )
-            .src =
-            profile.pictureUrl;
-
-        document
-            .getElementById(
-                "displayName"
-            )
-            .innerText =
-            profile.displayName;
-        document
-            .getElementById(
-                "registerCampaignBtn"
-            )
-            ?.addEventListener(
-                "click",
-                () => {
-
-                    window.location.href =
-                        "./register.html";
-                }
-            );
-
-        document
-            .querySelectorAll(
-                ".activity-toggle"
-            )
-            .forEach(button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const content =
-                            button.nextElementSibling;
-
-                        const arrow =
-                            button.querySelector(
-                                ".arrow"
-                            );
-
-                        content.classList.toggle(
-                            "hidden"
-                        );
-
-                        arrow.classList.toggle(
-                            "rotate-180"
-                        );
-                    }
-                );
-            });
-
-        document
-            .getElementById(
-                "activityCode"
-            )
-            .innerText =
-            activityCode;
-
-        renderRoleBadge(
-            data.role
-        );
-        renderActivities(
-            data.userActivities
-        );
+    if (!profile) {
+      return;
     }
-    catch (error) {
-        alert(error.message || "發生錯誤，請稍後再試。");
-        console.error(error);
-    }
+
+    console.log(profile);
+
+    const lineUserId = profile.userId;
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/user/info/${lineUserId}`,
+      {
+        method: "GET",
+
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      },
+    );
+    const resData = await response.json();
+
+    const data = resData.data;
+
+    const activityCode = data.activityCode?.toString().padStart(8, "0");
+
+    document.getElementById("coverImage").src = profile.pictureUrl;
+
+    document.getElementById("avatarImage").src = profile.pictureUrl;
+
+    document.getElementById("displayName").innerText = profile.displayName;
+    document
+      .getElementById("registerCampaignBtn")
+      ?.addEventListener("click", () => {
+        window.location.href = "./register.html";
+      });
+
+    document.querySelectorAll(".activity-toggle").forEach((button) => {
+      button.addEventListener("click", () => {
+        const content = button.nextElementSibling;
+
+        const arrow = button.querySelector(".arrow");
+
+        content.classList.toggle("hidden");
+
+        arrow.classList.toggle("rotate-180");
+      });
+    });
+
+    document.getElementById("activityCode").innerText = activityCode;
+
+    renderRoleBadge(data.role);
+    renderActivities(data.userActivities);
+  } catch (error) {
+    alert(error.message || "發生錯誤，請稍後再試。");
+    console.error(error);
+  }
 }
 
 init();
 
-function renderActivities(
-    userActivities
-) {
+function renderActivities(userActivities) {
+  const container = document.getElementById("activityListContainer");
 
-    const container =
-        document.getElementById(
-            "activityListContainer"
-        );
+  if (!container) {
+    return;
+  }
 
-    if (!container) {
-        return;
-    }
-
-    /*
+  /*
     無資料
     */
 
-    if (
-        !userActivities ||
-        userActivities.length === 0
-    ) {
-
-        container.innerHTML = `
+  if (!userActivities || userActivities.length === 0) {
+    container.innerHTML = `
             <div
                 class="
                     mt-8
@@ -287,69 +195,55 @@ function renderActivities(
             </div>
         `;
 
-        return;
-    }
+    return;
+  }
 
-    /*
+  /*
     有資料
     */
 
-    container.innerHTML =
-        userActivities
-            .map(
-                activity =>
-                    renderActivityCard(
-                        activity
-                    )
-            )
-            .join("");
+  container.innerHTML = userActivities
+    .map((activity) => renderActivityCard(activity))
+    .join("");
 
-    bindAccordionEvents();
-    bindActionEvents();
+  bindAccordionEvents();
+  bindActionEvents();
 }
-function renderActivityCard(
-    activity
-) {
+function renderActivityCard(activity) {
+  const statusMap = {
+    active: {
+      text: "活動中",
+      bg: "bg-sky-50",
+      color: "text-sky-700",
+    },
 
-    const statusMap = {
+    expired: {
+      text: "已逾期",
+      bg: "bg-red-50",
+      color: "text-red-700",
+    },
 
-        active: {
-            text: "活動中",
-            bg: "bg-sky-50",
-            color: "text-sky-700"
-        },
+    completed_unclaimed: {
+      text: "未兌獎",
+      bg: "bg-amber-50",
+      color: "text-amber-700",
+    },
 
-        expired: {
-            text: "已逾期",
-            bg: "bg-red-50",
-            color: "text-red-700"
-        },
+    completed_claimed: {
+      text: "已兌獎",
+      bg: "bg-emerald-50",
+      color: "text-emerald-700",
+    },
 
-        completed_unclaimed: {
-            text: "未兌獎",
-            bg: "bg-amber-50",
-            color: "text-amber-700"
-        },
+    pending: {
+      text: "未驗證",
+      bg: "bg-slate-100",
+      color: "text-slate-600",
+    },
+  };
 
-        completed_claimed: {
-            text: "已兌獎",
-            bg: "bg-emerald-50",
-            color: "text-emerald-700"
-        },
-
-        pending: {
-            text: "未驗證",
-            bg: "bg-slate-100",
-            color: "text-slate-600"
-        }
-    };
-
-    const status =
-        statusMap[
-        activity.status
-        ] ??
-        statusMap.pending;
-    let actionButton = `
+  const status = statusMap[activity.status] ?? statusMap.pending;
+  let actionButton = `
     <button
         disabled
         class="
@@ -367,9 +261,8 @@ function renderActivityCard(
     </button>
 `;
 
-    if (activity.status === "active") {
-
-        actionButton = `
+  if (activity.status === "active") {
+    actionButton = `
         <button
             class="
                 activity-enter-btn
@@ -386,14 +279,10 @@ function renderActivityCard(
             前往活動
         </button>
     `;
-    }
+  }
 
-    if (
-        activity.status ===
-        "completed_unclaimed"
-    ) {
-
-        actionButton = `
+  if (activity.status === "completed_unclaimed") {
+    actionButton = `
         <button
          id="generate-qrcode-btn-${activity.userActivityId}"
             class="
@@ -412,14 +301,10 @@ function renderActivityCard(
             產生 QRCode
         </button>
     `;
-    }
+  }
 
-    if (
-        activity.status ===
-        "completed_claimed"
-    ) {
-
-        actionButton = `
+  if (activity.status === "completed_claimed") {
+    actionButton = `
         <button
             disabled
             class="
@@ -436,14 +321,10 @@ function renderActivityCard(
             已兌獎
         </button>
     `;
-    }
+  }
 
-    if (
-        activity.status ===
-        "expired"
-    ) {
-
-        actionButton = `
+  if (activity.status === "expired") {
+    actionButton = `
         <button
             disabled
             class="
@@ -460,9 +341,9 @@ function renderActivityCard(
             已逾期
         </button>
     `;
-    }
+  }
 
-    return `
+  return `
         <div
             class="
                 activity-card
@@ -720,301 +601,179 @@ function renderActivityCard(
     `;
 }
 function bindAccordionEvents() {
+  document.querySelectorAll(".activity-toggle").forEach((button) => {
+    button.onclick = () => {
+      const content = button.nextElementSibling;
 
-    document
-        .querySelectorAll(
-            ".activity-toggle"
-        )
-        .forEach(button => {
+      const arrow = button.querySelector(".arrow");
 
-            button.onclick =
-                () => {
+      content?.classList.toggle("hidden");
 
-                    const content =
-                        button.nextElementSibling;
-
-                    const arrow =
-                        button.querySelector(
-                            ".arrow"
-                        );
-
-                    content?.classList.toggle(
-                        "hidden"
-                    );
-
-                    arrow?.classList.toggle(
-                        "rotate-180"
-                    );
-                };
-        });
+      arrow?.classList.toggle("rotate-180");
+    };
+  });
 }
 function bindActionEvents() {
-    const qrcodeTimers = {};
+  const qrcodeTimers = {};
 
-    async function generateRewardQRCode(
-        userActivityId
-    ) {
+  async function generateRewardQRCode(userActivityId) {
+    const qrcodeContainer = document.getElementById(`qrcode-${userActivityId}`);
 
-        const qrcodeContainer =
-            document.getElementById(
-                `qrcode-${userActivityId}`
-            );
+    const timerContainer = document.getElementById(
+      `qrcode-timer-${userActivityId}`,
+    );
 
-        const timerContainer =
-            document.getElementById(
-                `qrcode-timer-${userActivityId}`
-            );
-
-        if (!qrcodeContainer || !timerContainer) {
-            return;
-        }
-
-        qrcodeContainer.innerHTML = "";
-
-        timerContainer.innerText =
-            "QRCode 產生中...";
-
-        try {
-
-            const response =
-                await fetch(
-                    `${API_BASE_URL}/api/rewards/qrcode-token`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type":
-                                "application/json",
-                            "ngrok-skip-browser-warning":
-                                "true"
-                        },
-                        body: JSON.stringify({
-                            activityId:
-                                userActivityId
-                        })
-                    }
-                );
-
-            const result =
-                await response.json();
-
-            if (!response.ok) {
-
-                timerContainer.innerText =
-                    result.message;
-
-                return;
-            }
-
-            const token =
-                result.data.token;
-
-            const expiresAt =
-                Date.now() +
-                (
-                    result.data.expiresIn *
-                    1000
-                );
-
-            new QRCode(
-                qrcodeContainer,
-                {
-                    text: token,
-                    width: 180,
-                    height: 180
-                }
-            );
-
-            updateQRCodeTimer(
-                userActivityId,
-                expiresAt
-            );
-
-            qrcodeTimers[userActivityId] =
-                setInterval(
-                    () => {
-
-                        updateQRCodeTimer(
-                            userActivityId,
-                            expiresAt
-                        );
-
-                    },
-                    1000
-                );
-
-        }
-        catch (error) {
-
-            console.error(error);
-
-            timerContainer.innerText =
-                "QRCode 產生失敗";
-        }
+    if (!qrcodeContainer || !timerContainer) {
+      return;
     }
-    function updateQRCodeTimer(
-        userActivityId,
-        expiresAt
-    ) {
-        const qrcodeContainer =
-            document.getElementById(
-                `qrcode-${userActivityId}`
-            );
 
-        const timerContainer =
-            document.getElementById(
-                `qrcode-timer-${userActivityId}`
-            );
-
-        if (!qrcodeContainer || !timerContainer) {
-            return;
-        }
-
-        const remaining =
-            expiresAt -
-            Date.now();
-
-        if (remaining <= 0) {
-
-            clearInterval(
-                qrcodeTimers[
-                userActivityId
-                ]
-            );
-
-            timerContainer.innerText =
-                "QRCode 已失效，請重新產生";
-
-            qrcodeContainer.innerHTML =
-                "";
-
-            return;
-        }
-
-        const minutes =
-            Math.floor(
-                remaining / 1000 / 60
-            );
-
-        const seconds =
-            Math.floor(
-                (
-                    remaining / 1000
-                ) % 60
-            );
-
-        timerContainer.innerText =
-            `剩餘時間 ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    // 重點：重新產生前，先清除舊的倒數 timer
+    if (qrcodeTimers[userActivityId]) {
+      clearInterval(qrcodeTimers[userActivityId]);
+      delete qrcodeTimers[userActivityId];
     }
-    document
-        .querySelectorAll(
-            ".activity-enter-btn"
-        )
-        .forEach(btn => {
 
-            btn.onclick = () => {
+    qrcodeContainer.innerHTML = "";
 
-                const userActivityId =
-                    btn.dataset.id;
+    timerContainer.innerText = "QRCode 產生中...";
 
-                window.location.href =
-                    `./progress.html?userActivityId=${userActivityId}`;
-            };
-        });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/rewards/qrcode-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({
+          activityId: userActivityId,
+        }),
+      });
 
-    document
-        .querySelectorAll(
-            ".activity-qrcode-btn"
-        )
-        .forEach(btn => {
+      const result = await response.json();
 
-            btn.onclick =
-                async () => {
+      if (!response.ok) {
+        timerContainer.innerText = result.message || "QRCode 產生失敗";
 
-                    const userActivityId =
-                        btn.dataset.id;
+        return;
+      }
 
-                    const panel =
-                        document.getElementById(
-                            `qrcode-panel-${userActivityId}`
-                        );
+      const token = result.data.token;
 
-                    const generateBtn =
-                        document.getElementById(
-                            `generate-qrcode-btn-${userActivityId}`
-                        );
+      const expiresAt = Date.now() + result.data.expiresIn * 1000;
 
-                    if (!panel) {
-                        return;
-                    }
+      new QRCode(qrcodeContainer, {
+        text: token,
+        width: 180,
+        height: 180,
+      });
 
-                    panel.classList.remove(
-                        "hidden"
-                    );
+      updateQRCodeTimer(userActivityId, expiresAt);
 
-                    if (generateBtn) {
+      qrcodeTimers[userActivityId] = setInterval(() => {
+        updateQRCodeTimer(userActivityId, expiresAt);
+      }, 1000);
+    } catch (error) {
+      console.error(error);
 
-                        generateBtn.classList.add(
-                            "hidden"
-                        );
-                    }
+      timerContainer.innerText = "QRCode 產生失敗";
+    }
+  }
+  function updateQRCodeTimer(userActivityId, expiresAt) {
+    const qrcodeContainer = document.getElementById(`qrcode-${userActivityId}`);
 
-                    await generateRewardQRCode(
-                        userActivityId
-                    );
-                };
-        });
-    document
-        .querySelectorAll(
-            ".refresh-qrcode-btn"
-        )
-        .forEach(btn => {
+    const timerContainer = document.getElementById(
+      `qrcode-timer-${userActivityId}`,
+    );
 
-            btn.onclick =
-                async () => {
+    if (!qrcodeContainer || !timerContainer) {
+      return;
+    }
 
-                    const userActivityId =
-                        btn.dataset.id;
+    const remaining = expiresAt - Date.now();
 
-                    await generateRewardQRCode(
-                        userActivityId
-                    );
-                };
-        });
+    if (remaining <= 0) {
+      clearInterval(qrcodeTimers[userActivityId]);
+
+      timerContainer.innerText = "QRCode 已失效，請重新產生";
+
+      qrcodeContainer.innerHTML = "";
+
+      return;
+    }
+
+    const minutes = Math.floor(remaining / 1000 / 60);
+
+    const seconds = Math.floor((remaining / 1000) % 60);
+
+    timerContainer.innerText = `剩餘時間 ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+  document.querySelectorAll(".activity-enter-btn").forEach((btn) => {
+    btn.onclick = () => {
+      const userActivityId = btn.dataset.id;
+
+      window.location.href = `./progress.html?userActivityId=${userActivityId}`;
+    };
+  });
+
+  document.querySelectorAll(".activity-qrcode-btn").forEach((btn) => {
+    btn.onclick = async () => {
+      const userActivityId = btn.dataset.id;
+
+      const panel = document.getElementById(`qrcode-panel-${userActivityId}`);
+
+      const generateBtn = document.getElementById(
+        `generate-qrcode-btn-${userActivityId}`,
+      );
+
+      if (!panel) {
+        return;
+      }
+
+      panel.classList.remove("hidden");
+
+      if (generateBtn) {
+        generateBtn.classList.add("hidden");
+      }
+
+      await generateRewardQRCode(userActivityId);
+    };
+  });
+  document.querySelectorAll(".refresh-qrcode-btn").forEach((btn) => {
+    btn.onclick = async () => {
+      const userActivityId = btn.dataset.id;
+
+      await generateRewardQRCode(userActivityId);
+    };
+  });
 }
 
 function renderRoleBadge(role) {
+  const container = document.getElementById("roleBadgeContainer");
 
-    const container =
-        document.getElementById(
-            "roleBadgeContainer"
-        );
+  if (!container) {
+    return;
+  }
 
-    if (!container) {
-        return;
-    }
+  const roleConfig = {
+    一般會員: {
+      bg: "bg-emerald-100",
+      text: "text-emerald-700",
+    },
 
-    const roleConfig = {
-        "一般會員": {
-            bg: "bg-emerald-100",
-            text: "text-emerald-700"
-        },
+    管理者: {
+      bg: "bg-red-100",
+      text: "text-red-700",
+    },
 
-        "管理者": {
-            bg: "bg-red-100",
-            text: "text-red-700"
-        },
+    核銷人員: {
+      bg: "bg-fuchsia-100",
+      text: "text-fuchsia-700",
+    },
+  };
 
-        "核銷人員": {
-            bg: "bg-fuchsia-100",
-            text: "text-fuchsia-700"
-        }
-    };
+  const config = roleConfig[role] ?? roleConfig["一般會員"];
 
-    const config =
-        roleConfig[role] ??
-        roleConfig["一般會員"];
-
-    container.innerHTML = `
+  container.innerHTML = `
         <span
             class="
                 px-4

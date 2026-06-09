@@ -16,22 +16,6 @@ async function init() {
 
     const lineUserId = profile.userId;
 
-    /*  const response = await fetch(
-      `${API_BASE_URL}/api/user/info/${lineUserId}`,
-      {
-        method: "GET",
-
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-        },
-      },
-    );
-    const resData = await response.json();
-
-    const data = resData.data;
-
-    const activityCode = data.activityCode?.toString().padStart(8, "0");
- */
     document
       .getElementById("registerCampaignBtn")
       ?.addEventListener("click", () => {
