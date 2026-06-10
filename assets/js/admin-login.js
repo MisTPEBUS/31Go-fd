@@ -1,5 +1,5 @@
-/* let API_BASE_URL =
-    "https://ab89-2001-b011-3-11e3-48c-6ba4-3f87-5184.ngrok-free.app"; */
+let API_BASE_URL =
+  "https://ab89-2001-b011-3-11e3-48c-6ba4-3f87-5184.ngrok-free.app";
 
 const sendCodeBtn = document.getElementById("sendCodeBtn");
 
